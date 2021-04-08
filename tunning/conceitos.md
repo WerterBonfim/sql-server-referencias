@@ -421,3 +421,13 @@ order by name
 
 ```
 
+
+
+## Conceito de BTree.
+
+https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
+
+* Uma das técnicas mais eficientes para organizar dados para uma pesquisa rápida 
+  é a utilização de ordenação utilizando uma estrutura de dados conhecida como árvore binária.
+
+  

@@ -78,4 +78,52 @@ go
 select * from sys.dm_exec_sessions where session_id >= 51
 
 
+
+-- Localiza a página de dados de uma linha da tabela
+select sys.fn_PhysLocFormatter(%%PHYSLOC%%) AS LocalFisico, *
+from [nome da tabela];
+
+-- paga os dados do buffer
+dbcc dropcleanbuffers
+
+
+-- força a gravação dos dados que estão no buffer no banco de dados
+checkpoint
+
+-- Analisa a quantidade de memoria
+select db_name(database_id)            as BancoDeDados,
+       (count(1) * 8192) / 1024 / 1024 as nQtdPaginas
+from sys.dm_os_buffer_descriptors
+group by db_name(database_id)
+order by nQtdPaginas desc
+
+
+-- a pouca documentação sobre a function:
+-- dm_db_database_page_allocations
+-- verificar como as páginas estão alocadas
+select extent_page_id as extent,
+       allocated_page_page_id as page,
+       is_mixed_page_allocation
+from sys.dm_db_database_page_allocations(
+    db_id(),
+    object_id('TesteExtendA'),
+    null,
+    null,
+    'DETAILED')
+order by page
+
+-- verificar quais tabelas estão alocando dados em uma determinada pagina
+select object_name(object_id) as tabela,
+       allocated_page_page_id as pageId
+from sys.dm_db_database_page_allocations(
+    db_id(),
+    null,
+    null,
+    null,
+    'DETAILED')
+where extent_page_id = 344
+order by pageId
+
+
+
 ```
